@@ -1,11 +1,14 @@
 class VideosController < ApplicationController
-  before_action :authorize_user
 
   def create
-    video_sharing_service = VideoSharingService.new(params[:thumbnail_url])
+    authorize_user
+    video_sharing_service = VideoSharingService.new(params[:url])
     video = current_user.videos.create(title: params[:title], description: params[:description], url: params[:url], thumbnail_url: video_sharing_service.extract_video_id())
     if video.save
-      ActionCable.server.broadcast 'video_channel', video: video.title, author: current_user.username
+      ActionCable.server.broadcast 'video_channel', {
+        video: video.title,
+        author: current_user.username
+      }
       render json: { message: "Video shared successfully" }, status: :created
     else
       render json: { errors: video.errors.full_messages }, status: :unprocessable_entity
@@ -17,6 +20,37 @@ class VideosController < ApplicationController
     render json: videos, status: :ok
   end
 
+  def update
+    video = Video.find(params[:id])
+    user_interaction = UserVideoInteraction.find_or_initialize_by(user: current_user, video: video)
+    # byebug
+    case params[:action_type]
+    when 'like'
+      user_interaction.action = 'like'
+      user_interaction.save
+      video.increment!(:likes)
+    when 'dislike'
+      user_interaction.action = 'dislike'
+      user_interaction.save
+      video.increment!(:dislikes)
+    when 'undolike'
+      if user_interaction.action == 'like'
+        user_interaction.destroy
+        video.decrement!(:likes)
+      end
+    when 'undodislike'
+      if user_interaction.action == 'dislike'
+        user_interaction.destroy
+        video.decrement!(:dislikes)
+      end
+    else
+      render json: { message: "Invalid action" }, status: :unprocessable_entity
+      return
+    end
+
+    render json: { message: "#{params[:action_type].capitalize} action recorded", likes: video.likes, dislikes: video.dislikes }, status: :ok
+  end
+  
   private
 
   def authorize_user

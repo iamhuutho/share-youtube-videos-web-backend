@@ -9,6 +9,10 @@ Rails.application.routes.draw do
   # root "posts#index"
 
   post 'register', to: 'user#create'
+  get 'users/:id', to: 'user#show', as: 'user'
   post 'login', to: 'user_session#create'
-  resources :videos, only: [:create, :index]
+  delete 'logout', to: 'user_session#destroy'
+  resources :videos, only: [:create, :index, :update]
+  resources :notifications, only: [:index, :update]
+  resources :user_video_interaction, only: [:show]
 end

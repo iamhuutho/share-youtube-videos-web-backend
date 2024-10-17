@@ -19,4 +19,15 @@ class UserSessionController < ApplicationController
       render json: { message: "Invalid credentials" }, status: :unauthorized
     end
   end
+
+  def destroy
+    user = User.find_by(username: params[:username])
+    current_session = user.user_sessions.find_by(revoked: false).last
+    if current_session
+      current_session.update(revoked: true)
+    else
+      render json: { message: "Session not found" }, status: :not_found
+    end
+  end
+
 end
