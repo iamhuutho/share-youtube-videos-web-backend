@@ -67,3 +67,9 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem 'devise'
+gem 'devise-jwt'
+gem 'actioncable'
+gem 'jwt'
+gem 'pg'

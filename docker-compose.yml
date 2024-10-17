@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails server -b '0.0.0.0' -p 3000"
+    volumes:
+      - .:/rails  # Mounts the current directory to /rails inside the container
+      - bundle_data:/usr/local/bundle  # Cache gems to speed up subsequent builds
+    ports:
+      - "3001:3000"  # Expose the Rails server on port 3000
+    depends_on:
+      - db  # Ensure database is ready before starting the Rails app
+    environment:
+      - RAILS_ENV=development
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=myapp_development
+      - BUNDLE_PATH=/usr/local/bundle
+    stdin_open: true
+    tty: true
+
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Persist database data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=myapp_development
+    ports:
+      - "5432:5432"  # Expose the database port
+
+volumes:
+  postgres_data:
+  bundle_data:
