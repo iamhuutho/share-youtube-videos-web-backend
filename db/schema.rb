@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_17_024219) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_17_045623) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "user_sessions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "session_token", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["session_token"], name: "index_user_sessions_on_session_token", unique: true
+    t.index ["user_id"], name: "index_user_sessions_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "username"
@@ -27,11 +37,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_17_024219) do
     t.string "thumbnail_url"
     t.string "url"
     t.string "video_id"
-    t.bigint "users_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["users_id"], name: "index_videos_on_users_id"
+    t.index ["user_id"], name: "index_videos_on_user_id"
   end
 
-  add_foreign_key "videos", "users", column: "users_id"
+  add_foreign_key "user_sessions", "users"
+  add_foreign_key "videos", "users"
 end

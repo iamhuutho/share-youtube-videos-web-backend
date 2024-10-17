@@ -6,7 +6,7 @@ class CreateVideos < ActiveRecord::Migration[7.1]
       t.string :thumbnail_url
       t.string :url
       t.string :video_id
-      t.references :users, null: false, foreign_key: true
+      t.references :user, null: false, foreign_key: true
 
       t.timestamps
     end

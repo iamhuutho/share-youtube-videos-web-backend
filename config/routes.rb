@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
 
-  post 'register', to: 'users#create'
-  post 'login', to: 'sessions#create'
+  post 'register', to: 'user#create'
+  post 'login', to: 'user_session#create'
   resources :videos, only: [:create, :index]
 end
