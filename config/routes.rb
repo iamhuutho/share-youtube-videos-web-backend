@@ -15,4 +15,6 @@ Rails.application.routes.draw do
   resources :videos, only: [:create, :index, :update]
   resources :notification, only: [:create, :index, :update]
   get 'user_video_interaction/:video_id/:username', to: 'user_video_interaction#get_interaction'
+  put 'user_video_interaction/:id', to: 'user_video_interaction#update'
+  resources :notification_history, only: [:create, :update]
 end

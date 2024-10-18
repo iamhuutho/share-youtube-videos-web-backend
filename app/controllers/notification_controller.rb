@@ -2,28 +2,32 @@ class NotificationController < ApplicationController
   before_action :authorize_user
 
   def create
-    @video = current_user.notification.new(notification_params)
-    if @video.save
+    @notification = current_user.notification.new(notification_params)
+    if @notification.save
       VideoChannel.broadcast_to(
         'video_channel',
-        { action: 'notify', author: current_user.username, video: @video.title, user_id: current_user.id }
+        { action: 'notify', author: current_user.username, video: @notification.title, user_id: current_user.id }
       )
-      render json: @video, status: :created
+      render json: @notification, status: :created
     else
-      render json: { errors: @video.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @notification.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   def index
-    @notifications = current_user.notification
-    byebug
-    render json: @notification
-  end
+    @notifications = Notification.select(:id, :user_id, :title, :message).where.not(user_id: current_user.id)
+    notifications_response = @notifications.map do |notification|
+      user_id = User.find_by(username: params[:username]).id
+      noti_hist_element = NotificationHistory.find_by(notification_id: notification.id, user_id: user_id, read: true)
+      {
+        id: notification.id,
+        title: notification.title,
+        message: notification.message,
+        read: noti_hist_element.present?
+      }
+    end
 
-  def update
-    @notification = Notification.find(params[:id])
-    @notification.update(read: true)
-    render json: { message: 'Notification marked as read' }, status: :ok
+    render json: notifications_response, status: :ok
   end
 
   private

@@ -7,7 +7,7 @@ class UserVideoInteractionController < ApplicationController
     if interaction
       render json: { liked: interaction.action }, status: :ok
     else
-      render json: { liked: nil }, status: :not_found
+      render json: { liked: nil }, status: :ok
     end
   end
 

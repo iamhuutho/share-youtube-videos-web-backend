@@ -32,6 +32,16 @@ class VideosController < ApplicationController
       user_interaction.action = 'dislike'
       user_interaction.save
       video.increment!(:dislikes)
+    when 'change_to_like'
+      user_interaction.action = 'like'
+      user_interaction.save
+      video.increment!(:likes)
+      video.decrement!(:dislikes)
+    when 'change_to_dislike'
+      user_interaction.action = 'dislike'
+      user_interaction.save
+      video.increment!(:dislikes)
+      video.decrement!(:likes)
     when 'undolike'
       if user_interaction.action == 'like'
         user_interaction.destroy

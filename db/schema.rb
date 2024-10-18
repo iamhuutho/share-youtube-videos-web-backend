@@ -10,15 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_17_103742) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_18_030919) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "notification_histories", force: :cascade do |t|
+    t.bigint "notification_id", null: false
+    t.bigint "user_id", null: false
+    t.boolean "read", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["notification_id", "user_id"], name: "index_on_notification_and_user", unique: true
+    t.index ["notification_id"], name: "index_notification_histories_on_notification_id"
+    t.index ["user_id"], name: "index_notification_histories_on_user_id"
+  end
 
   create_table "notifications", force: :cascade do |t|
     t.string "title"
     t.text "message"
     t.bigint "user_id", null: false
-    t.boolean "read"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_notifications_on_user_id"
@@ -66,6 +76,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_17_103742) do
     t.index ["user_id"], name: "index_videos_on_user_id"
   end
 
+  add_foreign_key "notification_histories", "notifications"
+  add_foreign_key "notification_histories", "users"
   add_foreign_key "notifications", "users"
   add_foreign_key "user_sessions", "users"
   add_foreign_key "user_video_interactions", "users"
