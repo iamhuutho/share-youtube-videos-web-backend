@@ -20,11 +20,12 @@ class UserSessionController < ApplicationController
     end
   end
 
-  def destroy
+  def logout
     user = User.find_by(username: params[:username])
-    current_session = user.user_sessions.find_by(revoked: false).last
+    current_session = user.user_sessions.where(revoked: false).last
     if current_session
       current_session.update(revoked: true)
+      render json: { message: "Session revoked" }, status: :ok
     else
       render json: { message: "Session not found" }, status: :not_found
     end

@@ -11,8 +11,8 @@ Rails.application.routes.draw do
   post 'register', to: 'user#create'
   get 'users/:id', to: 'user#show', as: 'user'
   post 'login', to: 'user_session#create'
-  delete 'logout', to: 'user_session#destroy'
+  post 'logout', to: 'user_session#logout'
   resources :videos, only: [:create, :index, :update]
-  resources :notifications, only: [:index, :update]
-  resources :user_video_interaction, only: [:show]
+  resources :notification, only: [:create, :index, :update]
+  get 'user_video_interaction/:video_id/:username', to: 'user_video_interaction#get_interaction'
 end

@@ -1,20 +1,19 @@
 class UserVideoInteractionController < ApplicationController
   before_action :authorize_user
 
-  def show
+  def get_interaction
     interaction = UserVideoInteraction.find_by(user_id: current_user.id, video_id: params[:video_id])
-    
+
     if interaction
-      render json: { liked: interaction.liked, disliked: interaction.disliked }, status: :ok
+      render json: { liked: interaction.action }, status: :ok
     else
-      render json: { liked: false, disliked: false }, status: :ok
+      render json: { liked: nil }, status: :not_found
     end
   end
 
   private
 
   def authorize_user
-    byebug
     session = current_user.user_sessions.last
     AuthorizationService.new(session).authorize_user
   rescue AuthorizationError => e

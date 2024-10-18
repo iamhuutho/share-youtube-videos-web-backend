@@ -15,7 +15,7 @@ class VideoChannel < ApplicationCable::Channel
     notification = Notification.create(
       title: "New Video Shared",
       message: "#{data['author']} shared a new video: #{data['video']}",
-      user_id: data['user_id'], # This should be the ID of the user who shared the video
+      user_id: data['user_id'], # The user who shared the video
     )
     
     ActionCable.server.broadcast 'video_channel', {

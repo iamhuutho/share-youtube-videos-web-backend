@@ -23,7 +23,6 @@ class VideosController < ApplicationController
   def update
     video = Video.find(params[:id])
     user_interaction = UserVideoInteraction.find_or_initialize_by(user: current_user, video: video)
-    # byebug
     case params[:action_type]
     when 'like'
       user_interaction.action = 'like'
