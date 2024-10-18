@@ -4,15 +4,15 @@ class AuthorizationService
   end
 
   def authorize_user
-    valid_token
+    return true if valid_token
+    raise AuthorizationError, "Session has expired"
   end
 
   private
 
   def valid_token
-    @session.expires_at > Time.now
+    @session.expires_at > Time.current
   end
-
 end
 
 class AuthorizationError < StandardError; end

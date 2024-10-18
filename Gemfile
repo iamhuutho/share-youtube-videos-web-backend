@@ -61,6 +61,8 @@ group :development do
 
   gem "error_highlight", ">= 0.4.0", platforms: [:ruby]
   gem "byebug"
+  gem 'rspec-rails'
+  gem 'factory_bot_rails'
 end
 
 group :test do
@@ -68,6 +70,8 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "byebug"
+  gem 'rspec-rails'
+  gem 'factory_bot_rails'
 end
 
 gem 'devise'
